@@ -1,0 +1,64 @@
+<SliderWithValue@BoxLayout>:
+    slider_name: ""
+    min: 0
+    max: 1
+    step: .01
+    value: slider.value
+    Label:
+        size_hint_x:1
+        text: root.slider_name
+    Slider:
+        size_hint_x:3
+        id: slider
+        min: root.min
+        max: root.max
+        step: root.step
+    Label:
+        size_hint_x: 1
+        size: min(root.size), min(root.size)
+        text: str(slider.value)[:4]
+
+<MagicEyeWidget>:
+
+    orientation: 'vertical'
+    BoxLayout:
+        size_hint_y:3
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint_x:1
+            Button:
+                text: "Load Depth Image"
+                on_touch_up: root.load_image()
+            Button:
+                text: "View Depth Image"
+                on_touch_up: root.view_image()
+            Button:
+                text: "Load Texture Map"
+                on_touch_up: root.load_texture_map()
+            Button:
+                text: "View Texture Map"
+                on_touch_up: root.view_texture_map()
+            Button:
+                text: "View Magic Eye Image"
+                on_touch_up: root.view_magic_eye_image()
+            Button:
+                text: "Save Magic Eye Image"
+                on_touch_up: root.save_magic_eye_image()
+        Image:
+            id: magic_eye_img
+            pos: self.pos
+            source: root.magic_eye_img_source
+            size_hint_x: 3
+            allow_stretch: False
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint_y:1
+        SliderWithValue:
+            slider_name: "illusion depth"
+            on_value: root.update_depth(self.value)
+        SliderWithValue:
+            slider_name: "Num strips"
+            min: 5
+            max: 20
+            step: 1
+            on_value: root.update_num_strips(self.value)

@@ -1,17 +1,16 @@
-import numpy as np
-from PIL import Image
-import matplotlib.pyplot as plt
-
 import cProfile
 import pstats
 
+import numpy as np
+from PIL import Image
 
-def gen_sis(depth_map_path, texture_map_path, depth_factor=.1, num_strips=10, texture_fixed_width=100):
+
+def gen_sis(depth_map_path, texture_map_path, depth_factor=.1, num_strips=10, strip_width=100):
     texture_map_im = Image.open(texture_map_path)
     depth_map_im = Image.open(depth_map_path).convert('L')
 
     texture_map_im, depth_map_im = resize_texture_n_depth_map(texture_map_im, depth_map_im, num_strips,
-                                                              texture_fixed_width)
+                                                              strip_width)
     texture_map_data = np.array(texture_map_im)
     depth_map_data = np.array(depth_map_im) / 255
 
@@ -19,16 +18,16 @@ def gen_sis(depth_map_path, texture_map_path, depth_factor=.1, num_strips=10, te
     return result_map
 
 
-def resize_texture_n_depth_map(texture_map_im, depth_map_im, num_strips, texture_fixed_width):
+def resize_texture_n_depth_map(texture_map_im, depth_map_im, num_strips, strip_width):
     texture_width, texture_height = texture_map_im.size
     texture_map_ratio = texture_height / texture_width
-    texture_map_resized = texture_map_im.resize((texture_fixed_width,
-                                                 int(texture_fixed_width * texture_map_ratio)))
+    texture_map_resized = texture_map_im.resize((strip_width,
+                                                 int(strip_width * texture_map_ratio)))
 
     depth_map_width, depth_map_height = depth_map_im.size
     depth_map_ratio = depth_map_height / depth_map_width
-    depth_map_resized = depth_map_im.resize((texture_fixed_width * num_strips,
-                                             int(texture_fixed_width * num_strips * depth_map_ratio)),
+    depth_map_resized = depth_map_im.resize((strip_width * num_strips,
+                                             int(strip_width * num_strips * depth_map_ratio)),
                                             resample=Image.BOX)
     return texture_map_resized, depth_map_resized
 
@@ -57,8 +56,8 @@ def gen_depth_offset_map(texture_map_data, depth_map_data, num_strips, depth_fac
     row_idc = np.arange(result_map.shape[0])
 
     for i in range(depth_map_width):
-        result_map[row_idc, i + texture_width, :] = result_map[row_idc, i + depth_normed[:, i], :].reshape(-1,
-                                                                                                           texture_channels)
+        result_map[row_idc, i + texture_width, :] = \
+            result_map[row_idc, i + depth_normed[:, i], :].reshape(-1, texture_channels)
         tmp[row_idc, i + texture_width] = tile_range_x_tmp[row_idc, i + depth_normed[:, i]]
     return result_map
 

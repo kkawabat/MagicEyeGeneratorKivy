@@ -47,7 +47,11 @@ class MagicEyeWidget(BoxLayout):
         canvas_img = gen_sis(self.depth_map_source, self.texture_map_source,
                              self.depth_val, self.num_strips, self.strip_width)
         data = BytesIO()
-        Image.fromarray(canvas_img.astype(np.uint8), mode="RGBA").save(data, format='png')
+        if isinstance(canvas_img, Image.Image):
+            canvas_img.save(data, format='png')
+        else:
+            canvas_img[0].save(data, format='GIF', append_images=canvas_img[1:],
+                               save_all=True, duration=100, loop=0)
         data.seek(0)
         return CoreImage(data, ext='png')
 

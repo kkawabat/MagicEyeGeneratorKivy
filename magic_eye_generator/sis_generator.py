@@ -6,16 +6,33 @@ from PIL import Image
 
 
 def gen_sis(depth_map_path, texture_map_path, depth_factor=.1, num_strips=10, strip_width=100):
+    depth_map_image = Image.open(depth_map_path)
     texture_map_im = Image.open(texture_map_path)
-    depth_map_im = Image.open(depth_map_path).convert('L')
 
-    texture_map_im, depth_map_im = resize_texture_n_depth_map(texture_map_im, depth_map_im, num_strips,
+    if hasattr(depth_map_image, "is_animated") and depth_map_image.is_animated:
+        sis_frames = []
+        for frame in range(0, depth_map_image.n_frames):
+            depth_map_frame = depth_map_image.seek(frame)
+            sis_frame = gen_sis_single(depth_map_frame, texture_map_im,
+                                       depth_factor=depth_factor, num_strips=num_strips, strip_width=strip_width)
+            sis_frames.append(sis_frame)
+
+        return sis_frames
+    else:
+        sis_image = gen_sis_single(depth_map_image, texture_map_im,
+                                   depth_factor=depth_factor, num_strips=num_strips, strip_width=strip_width)
+        return sis_image
+
+
+def gen_sis_single(depth_map_image, texture_map_image, depth_factor=.1, num_strips=10, strip_width=100):
+    bw_depth_map_image = depth_map_image.convert('L')
+    texture_map_im, depth_map_im = resize_texture_n_depth_map(bw_depth_map_image, texture_map_image, num_strips,
                                                               strip_width)
     texture_map_data = np.array(texture_map_im)
     depth_map_data = np.array(depth_map_im) / 255
 
     result_map = gen_depth_offset_map(texture_map_data, depth_map_data, num_strips, depth_factor)
-    return result_map
+    return Image.fromarray(result_map.astype(np.uint8), mode="RGBA")
 
 
 def resize_texture_n_depth_map(texture_map_im, depth_map_im, num_strips, strip_width):

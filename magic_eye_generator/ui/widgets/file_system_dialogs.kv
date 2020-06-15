@@ -5,6 +5,9 @@
         orientation: "vertical"
         FileChooserListView:
             id: filechooser
+            path: root.default_dir
+            dirselect: False
+            filters: [root.file_filter]
 
         BoxLayout:
             size_hint_y: None
@@ -25,6 +28,8 @@
         orientation: "vertical"
         FileChooserListView:
             id: filechooser
+            path: root.default_dir
+            dirselect: False
             on_selection: text_input.text = self.selection and self.selection[0] or ''
 
         TextInput:

@@ -28,26 +28,27 @@
             size_hint_x:1
             Button:
                 text: "Load Depth Image"
-                on_touch_up: root.load_image()
-            Button:
-                text: "View Depth Image"
-                on_touch_up: root.view_image()
+                on_press: root.load_depth_map(*args)
+#            Button:
+#                text: "View Depth Image"
+#                on_press: root.view_depth_map(*args)
             Button:
                 text: "Load Texture Map"
-                on_touch_up: root.load_texture_map()
+                on_press: root.load_texture_map(*args)
+#            Button:
+#                text: "View Texture Map"
+#                on_press: root.view_texture_map(*args)
             Button:
-                text: "View Texture Map"
-                on_touch_up: root.view_texture_map()
-            Button:
-                text: "View Magic Eye Image"
-                on_touch_up: root.view_magic_eye_image()
+                text: "Generate\nMagic Eye Image"
+                halign: 'center'
+                on_press: root.view_magic_eye_image(*args)
             Button:
                 text: "Save Magic Eye Image"
-                on_touch_up: root.save_magic_eye_image()
+                on_press: root.save_magic_eye_image(*args)
         Image:
-            id: magic_eye_img
+            id: img_viewer
             pos: self.pos
-            source: root.magic_eye_img_source
+            source: 'texture_example_image.png'
             size_hint_x: 3
             allow_stretch: False
     BoxLayout:

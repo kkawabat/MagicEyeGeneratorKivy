@@ -7,19 +7,20 @@ from PIL import Image
 
 def gen_sis(depth_map_path, texture_map_path, depth_factor=.1, num_strips=10, strip_width=100):
     depth_map_image = Image.open(depth_map_path)
-    texture_map_im = Image.open(texture_map_path)
+    texture_map_image = Image.open(texture_map_path)
 
     if hasattr(depth_map_image, "is_animated") and depth_map_image.is_animated:
         sis_frames = []
         for frame in range(0, depth_map_image.n_frames):
-            depth_map_frame = depth_map_image.seek(frame)
-            sis_frame = gen_sis_single(depth_map_frame, texture_map_im,
+            print(f"processing frame {frame+1} of {depth_map_image.n_frames}")
+            depth_map_image.seek(frame)
+            sis_frame = gen_sis_single(depth_map_image, texture_map_image,
                                        depth_factor=depth_factor, num_strips=num_strips, strip_width=strip_width)
             sis_frames.append(sis_frame)
 
         return sis_frames
     else:
-        sis_image = gen_sis_single(depth_map_image, texture_map_im,
+        sis_image = gen_sis_single(depth_map_image, texture_map_image,
                                    depth_factor=depth_factor, num_strips=num_strips, strip_width=strip_width)
         return sis_image
 
@@ -35,7 +36,7 @@ def gen_sis_single(depth_map_image, texture_map_image, depth_factor=.1, num_stri
     return Image.fromarray(result_map.astype(np.uint8), mode="RGBA")
 
 
-def resize_texture_n_depth_map(texture_map_im, depth_map_im, num_strips, strip_width):
+def resize_texture_n_depth_map(depth_map_im, texture_map_im, num_strips, strip_width):
     texture_width, texture_height = texture_map_im.size
     texture_map_ratio = texture_height / texture_width
     texture_map_resized = texture_map_im.resize((strip_width,

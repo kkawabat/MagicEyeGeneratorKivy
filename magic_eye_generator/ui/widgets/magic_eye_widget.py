@@ -49,11 +49,13 @@ class MagicEyeWidget(BoxLayout):
         data = BytesIO()
         if isinstance(canvas_img, Image.Image):
             canvas_img.save(data, format='png')
+            data.seek(0)
+            return CoreImage(data, ext='png')
         else:
             canvas_img[0].save(data, format='GIF', append_images=canvas_img[1:],
                                save_all=True, duration=100, loop=0)
-        data.seek(0)
-        return CoreImage(data, ext='png')
+            data.seek(0)
+            return CoreImage(data, ext='GIF')
 
     def save_magic_eye_image(self, *args):
         def save(path, filename):
@@ -65,14 +67,14 @@ class MagicEyeWidget(BoxLayout):
     def update_depth(self, slider, touch):
         if self.depth_val != slider.value:
             self.depth_val = slider.value
-            self.view_magic_eye_image()
+            # self.view_magic_eye_image()
 
     def update_num_strips(self, slider, touch):
         if self.num_strips != slider.value:
             self.num_strips = slider.value
-            self.view_magic_eye_image()
+            # self.view_magic_eye_image()
 
     def update_strip_width(self, slider, touch):
         if self.strip_width != slider.value:
             self.strip_width = slider.value
-            self.view_magic_eye_image()
+            # self.view_magic_eye_image()

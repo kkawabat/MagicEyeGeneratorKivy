@@ -1,6 +1,8 @@
 ##MagicEyeGenerator
 This project generates [magic eye](https://www.youtube.com/watch?v=v8O8Em_RPNg) illusion pictures with custom images and textures.  
 
+![](doc/squirrel_magic_eye1.png)
+
 ### dependencies
 Kivy (2.0.0rc2)  
 numpy  
@@ -14,8 +16,8 @@ pillow
 - change slider to adjust parameters if the illusion looks wonky
 - save image to file   
 
-![demo.gif](doc/demo.gif)
-here is the output image 
+![demo.gif](doc/demo.gif)  
+output image zoomed  
 ![demo.gif](doc/squirrel_magic_eye.png)
 
 This app also support gif depth map (experimental)

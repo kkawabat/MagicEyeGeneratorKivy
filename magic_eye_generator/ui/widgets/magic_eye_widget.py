@@ -58,6 +58,11 @@ class MagicEyeWidget(BoxLayout):
         else:
             # very hacky way of getting image to display (save it as a temporary image to be used as a source)
             # because I couldn't figure out how to load gif as image in memory
+            # canvas_img[0].save(data, format='gif', append_images=canvas_img[1:],
+            #                    save_all=True, duration=100, loop=0, optimize=False, )
+            # data.seek(0)
+            # a = CoreImage(data, ext='gif')
+            # a.anim_reset(True)
             canvas_img[0].save('tmp.gif', format='gif', append_images=canvas_img[1:],
                                save_all=True, duration=100, loop=0, optimize=False,)
             return 'tmp.gif'

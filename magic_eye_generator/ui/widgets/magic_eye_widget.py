@@ -6,6 +6,7 @@ import numpy as np
 from PIL import Image
 from kivy.core.image import Image as CoreImage
 from kivy.lang import Builder
+from kivy.properties import NumericProperty
 from kivy.uix.boxlayout import BoxLayout
 
 from magic_eye_generator.sis_generator import gen_sis
@@ -16,13 +17,13 @@ data_dir = Path(__file__).parents[3].joinpath('data')
 
 
 class MagicEyeWidget(BoxLayout):
+    depth_val = NumericProperty(.5)
+    num_strips = NumericProperty(10)
+    strip_width = NumericProperty(100)
 
     def __init__(self, **kwargs):
         super(MagicEyeWidget, self).__init__(**kwargs)
         self._popup = None
-        self.depth_val = 0
-        self.num_strips = 10
-        self.strip_width = 100
         self.depth_map_source = None
         self.texture_map_source = None
         self.magic_eye_image = None
@@ -41,7 +42,10 @@ class MagicEyeWidget(BoxLayout):
 
     def view_magic_eye_image(self, *args):
         self.magic_eye_image = self.gen_magic_eye()
-        self.ids.img_viewer.texture = self.magic_eye_image.texture
+        if isinstance(self.magic_eye_image, str):
+            self.ids.img_viewer.source = self.magic_eye_image
+        else:
+            self.ids.img_viewer.texture = self.magic_eye_image.texture
 
     def gen_magic_eye(self):
         canvas_img = gen_sis(self.depth_map_source, self.texture_map_source,
@@ -52,14 +56,15 @@ class MagicEyeWidget(BoxLayout):
             data.seek(0)
             return CoreImage(data, ext='png')
         else:
-            canvas_img[0].save(data, format='GIF', append_images=canvas_img[1:],
-                               save_all=True, duration=100, loop=0)
-            data.seek(0)
-            return CoreImage(data, ext='GIF')
+            # very hacky way of getting image to display (save it as a temporary image to be used as a source)
+            # because I couldn't figure out how to load gif as image in memory
+            canvas_img[0].save('tmp.gif', format='gif', append_images=canvas_img[1:],
+                               save_all=True, duration=100, loop=0, optimize=False,)
+            return 'tmp.gif'
 
     def save_magic_eye_image(self, *args):
         def save(path, filename):
-            self.magic_eye_image.save(os.path.join(path, filename[0]))
+            self.magic_eye_image.save(os.path.join(path, filename))
 
         SaveDialogPopup(title='save magic eye image', save_func=save,
                         default_dir=str(data_dir.joinpath('magic_eye_results'))).open()

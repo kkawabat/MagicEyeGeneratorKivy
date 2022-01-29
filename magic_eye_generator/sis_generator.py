@@ -33,7 +33,8 @@ def gen_sis_single(depth_map_image, texture_map_image, depth_factor=.1, num_stri
     depth_map_data = np.array(depth_map_im) / 255
 
     result_map = gen_depth_offset_map(texture_map_data, depth_map_data, num_strips, depth_factor)
-    return Image.fromarray(result_map.astype(np.uint8), mode="RGBA")
+    result_map = result_map[:, :, :3]
+    return Image.fromarray(result_map.astype(np.uint8), mode="RGB")
 
 
 def resize_texture_n_depth_map(depth_map_im, texture_map_im, num_strips, strip_width):

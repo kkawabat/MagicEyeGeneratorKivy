@@ -4,6 +4,7 @@
     max: 1
     step: .01
     value: slider.value
+    default_value: 0
     Label:
         size_hint_x:1
         text: root.slider_name
@@ -12,6 +13,7 @@
         id: slider
         min: root.min
         max: root.max
+        value: root.default_value
         step: root.step
     Label:
         size_hint_x: 1
@@ -55,16 +57,19 @@
         size_hint_y:1
         SliderWithValue:
             slider_name: "illusion depth"
+            default_value: root.depth_val
             on_touch_up: root.update_depth(*args)
         SliderWithValue:
             slider_name: "Num strips"
             min: 5
             max: 20
+            default_value: root.num_strips
             step: 1
             on_touch_up: root.update_num_strips(*args)
         SliderWithValue:
             slider_name: "strip width"
             min: 50
             max: 300
+            default_value: root.strip_width
             step: 10
             on_touch_up: root.update_strip_width(*args)

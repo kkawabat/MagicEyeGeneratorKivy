@@ -3,7 +3,10 @@ This project generates [magic eye](https://www.youtube.com/watch?v=v8O8Em_RPNg) 
 
 ![](doc/squirrel_magic_eye1.png)
 
-### usage 
+### usage
+
+#### geneerate magic eye image
+ 
 `python main.py` to load the kivy app  
 - choose your depth map image (default files in data/depth_map folder)  
 - choose your texture image (default files in data/texture folder) 
@@ -15,7 +18,14 @@ This project generates [magic eye](https://www.youtube.com/watch?v=v8O8Em_RPNg) 
 output image zoomed  
 ![demo.gif](doc/squirrel_magic_eye.png)
 
-This app also support gif depth map (experimental)
+This app also support animated gif depth map (experimental)  
+
+#### extract hidden image from magic eye image (experimental)
+You can also extract hidden image from magic eye image (see sis_degenerator.py)  
+
+![demo.gif](doc/extracted_squirrel_hidden_image.PNG)
+
+
 
 ### installation
 requires:  

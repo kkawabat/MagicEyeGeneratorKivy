@@ -1,12 +1,9 @@
-import cProfile
 import os
-import pstats
 
 import numpy as np
 import scipy
 from PIL import Image, ImageOps
-import matplotlib.pyplot as plt
-from scipy.signal import peak_widths, find_peaks
+from scipy.signal import find_peaks
 
 
 def degen_sis(magic_image_path):
@@ -32,7 +29,7 @@ def degen_sis_single(magic_image):
 
     depth_width = estimate_depth_width(img_arr)
     if depth_width is None:
-        return Image(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'could_not_degenerate.png'))
+        return Image.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'could_not_degenerate.png'))
 
     result_depth_map_arr = np.zeros(img_arr.shape)
     depth_range = np.linspace(0, 256, depth_width-1)
@@ -56,10 +53,13 @@ def estimate_depth_width(img_arr):
     a = scipy.fft(shift_zero_count)
     b = scipy.fft(a)
     peaks, _ = find_peaks(b, height=b[0]*.10)
+
     # # for debugging
+    # import matplotlib.pyplot as plt
     # plt.plot(b)
     # plt.plot(peaks, b[peaks], "x")
     # plt.show()
+
     if len(peaks) == 0:
         return None
     else:

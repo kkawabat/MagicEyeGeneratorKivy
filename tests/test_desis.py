@@ -9,13 +9,6 @@ def test_desis():
     result_depth_map_.show()
 
 
-def test_desis2():
-    sample_magic_image_path = r'C:\Users\kkawa\PycharmProjects\magic_eye_generator\data\depth_map\aiga-eod-magiceye1.jpg'
-    result_depth_map_ = degen_sis(sample_magic_image_path)
-    result_depth_map_.show()
-
-
 if __name__ == '__main__':
-    test_desis2()
-    # test_desis()
+    test_desis()
 

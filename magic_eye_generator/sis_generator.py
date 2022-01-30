@@ -1,6 +1,3 @@
-import cProfile
-import pstats
-
 import numpy as np
 from PIL import Image
 
@@ -81,26 +78,7 @@ def gen_depth_offset_map(texture_map_data, depth_map_data, num_strips, depth_fac
     return result_map
 
 
-def test():
-    texture_map_path_ = r"C:\Users\kkawa\PycharmProjects\pythonarcade\codejam\data\texture\flower.PNG"
-    depth_map_path_ = r"C:\Users\kkawa\PycharmProjects\pythonarcade\codejam\data\depth_map\squirrel.png"
-
-    depth_factor_ = .05
-    num_strips_ = 10
-
-    result_map_ = gen_sis(depth_map_path_, texture_map_path_, depth_factor_, num_strips_)
-    result_img = Image.fromarray(result_map_.astype(np.uint8), mode="RGBA")
-    result_img.show()
-    result_img.save(r"C:\Users\kkawa\PycharmProjects\pythonarcade\codejam\data\result\Capture2.PNG")
 
 
-def main():
-    profile = cProfile.Profile()
-    profile.runcall(test)
-    ps = pstats.Stats(profile)
-    ps.sort_stats('cumtime')
-    ps.print_stats()
 
 
-if __name__ == '__main__':
-    main()

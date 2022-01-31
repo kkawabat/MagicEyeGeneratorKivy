@@ -1,6 +1,6 @@
 ## MagicEyeGenerator
 This project generates [magic eye](https://www.youtube.com/watch?v=v8O8Em_RPNg) illusion pictures with custom images and textures.  
-
+ 
 ![](doc/squirrel_magic_eye1.png)
 
 ### usage
@@ -44,3 +44,7 @@ https://developer.nvidia.com/gpugems/gpugems/part-vi-beyond-triangles/chapter-41
 https://kivy.org/doc/stable/examples/gen__canvas__texture__py.html
 
 https://stackoverflow.com/a/52340135/4231985
+
+
+#### aknowledgement
+This app is dedicated to long time mentor and friend @visarberisha who suffers from debilitating inability to see magic eye illusions 

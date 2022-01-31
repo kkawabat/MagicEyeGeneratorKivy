@@ -81,11 +81,12 @@ class MagicEyeWidget(BoxLayout):
             decoded_img_cor = CoreImage(data, ext='png')
             self.ids.img_viewer.texture = decoded_img_cor.texture
 
-        LoadDialogPopup(title='load magic eye', load_func=load, default_dir=str(data_dir.joinpath('magic_eye_results'))).open()
+        LoadDialogPopup(title='decode magic eye (this might take a minute to process...)', load_func=load, default_dir=str(data_dir.joinpath('magic_eye_results'))).open()
 
     def save_magic_eye_image(self, *args):
         def save(path, filename):
-            self.ids.img_viewer.texture.save(os.path.join(path, filename))
+            img = CoreImage(self.ids.img_viewer.texture)
+            img.save(os.path.join(path, filename))
 
         SaveDialogPopup(title='save current image', save_func=save,
                         default_dir=str(data_dir.joinpath('magic_eye_results'))).open()

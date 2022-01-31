@@ -1,9 +1,8 @@
 import os
 
 import numpy as np
-import scipy
 from PIL import Image, ImageOps
-from scipy.signal import find_peaks
+from scipy.ndimage import convolve
 
 
 def degen_sis(magic_image_path):
@@ -33,26 +32,19 @@ def degen_sis_single(magic_image):
 
     result_depth_map_arr = np.zeros(img_arr.shape)
     depth_range = np.linspace(0, 256, depth_width-1)
-    for i, depth in enumerate(depth_range):
-        print(i)
-        img_arr_shifted = np.roll(img_arr, -i, axis=1)
-        diff_zeros = (img_arr - img_arr_shifted) == 0
-        result_depth_map_arr[diff_zeros] = depth
+    for shift_idx, diff_zeros_smoothed in get_depth_zeros(range(depth_width-1), img_arr):
+        result_depth_map_arr[diff_zeros_smoothed] = depth_range[shift_idx]
 
     return Image.fromarray(result_depth_map_arr.astype(np.uint8))
 
 
 def estimate_depth_width(img_arr):
     shift_zero_count = []
-    for i in range(img_arr.shape[1]):
-        print(i)
-        img_arr_shifted = np.roll(img_arr, -i, axis=1)
-        diff_zeros = (img_arr - img_arr_shifted) == 0
-        shift_zero_count.append(sum(sum(diff_zeros)))
 
-    a = scipy.fft(shift_zero_count)
-    b = scipy.fft(a)
-    peaks, _ = find_peaks(b, height=b[0]*.10)
+    for shift_idx, diff_zeros_smoothed in get_depth_zeros(range(img_arr.shape[1]), img_arr):
+        shift_zero_count.append(sum(sum(diff_zeros_smoothed)))
+
+    r, lag = autocorr(np.array(shift_zero_count))
 
     # # for debugging
     # import matplotlib.pyplot as plt
@@ -60,7 +52,37 @@ def estimate_depth_width(img_arr):
     # plt.plot(peaks, b[peaks], "x")
     # plt.show()
 
-    if len(peaks) == 0:
+    if r < 0.5:
         return None
     else:
-        return peaks[0]
+        return lag
+
+
+def get_depth_zeros(depth_range, img_arr):
+    weights = np.array([[1, 1, 1, 1, 1],
+                        [1, 1, 1, 1, 1],
+                        [1, 1, 1, 1, 1],
+                        [1, 1, 1, 1, 1],
+                        [1, 1, 1, 1, 1]], dtype=np.float)
+    weights = weights / np.sum(weights[:])
+
+    for shift_idx, depth in enumerate(depth_range):
+        print(shift_idx)
+        img_arr_shifted = np.roll(img_arr, -shift_idx, axis=1)
+        diff_zeros = (img_arr - img_arr_shifted) == 0
+        diff_zeros_smoothed = convolve(diff_zeros, weights, mode='constant')
+        yield shift_idx, diff_zeros_smoothed
+
+
+def autocorr(x):
+    n = x.size
+    norm = (x - np.mean(x))
+    result = np.correlate(norm, norm, mode='same')
+    acorr = result[n//2 + 1:] / (x.var() * np.arange(n-1, n//2, -1))
+    lag = np.abs(acorr).argmax() + 1
+    r = acorr[lag-1]
+    if np.abs(r) > 0.5:
+      print('Appears to be autocorrelated with r = {}, lag = {}'. format(r, lag))
+    else:
+      print('Appears to be not autocorrelated')
+    return r, lag

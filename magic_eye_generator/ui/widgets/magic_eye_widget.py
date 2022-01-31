@@ -9,6 +9,7 @@ from kivy.lang import Builder
 from kivy.properties import NumericProperty
 from kivy.uix.boxlayout import BoxLayout
 
+from magic_eye_generator.sis_degenerator import degen_sis
 from magic_eye_generator.sis_generator import gen_sis
 from magic_eye_generator.ui.widgets.file_system_dialogs import LoadDialogPopup, SaveDialogPopup
 
@@ -66,6 +67,21 @@ class MagicEyeWidget(BoxLayout):
             canvas_img[0].save('tmp.gif', format='gif', append_images=canvas_img[1:],
                                save_all=True, duration=100, loop=0, optimize=False,)
             return 'tmp.gif'
+
+    def decode_magic_eye_image(self, *args):
+
+        def load(path, filename):
+            magic_eye_image_source = os.path.join(path, filename[0])
+            self.ids.img_viewer.source = magic_eye_image_source
+
+            decoded_img = degen_sis(magic_eye_image_source)
+            data = BytesIO()
+            decoded_img.save(data, format='png')
+            data.seek(0)
+            decoded_img_cor = CoreImage(data, ext='png')
+            self.ids.img_viewer.texture = decoded_img_cor.texture
+
+        LoadDialogPopup(title='load magic eye', load_func=load, default_dir=str(data_dir.joinpath('magic_eye_results'))).open()
 
     def save_magic_eye_image(self, *args):
         def save(path, filename):

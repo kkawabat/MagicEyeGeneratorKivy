@@ -44,6 +44,10 @@
                 halign: 'center'
                 on_press: root.view_magic_eye_image(*args)
             Button:
+                text: "Decode\nMagic Eye Image"
+                halign: 'center'
+                on_press: root.decode_magic_eye_image(*args)
+            Button:
                 text: "Save Magic Eye Image"
                 on_press: root.save_magic_eye_image(*args)
         Image:

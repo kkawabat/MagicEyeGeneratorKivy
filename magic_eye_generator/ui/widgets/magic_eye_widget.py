@@ -85,9 +85,9 @@ class MagicEyeWidget(BoxLayout):
 
     def save_magic_eye_image(self, *args):
         def save(path, filename):
-            self.magic_eye_image.save(os.path.join(path, filename))
+            self.ids.img_viewer.texture.save(os.path.join(path, filename))
 
-        SaveDialogPopup(title='save magic eye image', save_func=save,
+        SaveDialogPopup(title='save current image', save_func=save,
                         default_dir=str(data_dir.joinpath('magic_eye_results'))).open()
 
     def update_depth(self, slider, touch):

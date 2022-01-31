@@ -59,17 +59,14 @@ def estimate_depth_width(img_arr):
 
 
 def get_depth_zeros(depth_range, img_arr):
-    weights = np.array([[1, 1, 1, 1, 1],
-                        [1, 1, 1, 1, 1],
-                        [1, 1, 1, 1, 1],
-                        [1, 1, 1, 1, 1],
-                        [1, 1, 1, 1, 1]], dtype=np.float)
+    weights = np.array([[1, 1, 1],
+                        [1, 2, 1],
+                        [1, 1, 1]], dtype=np.float)
     weights = weights / np.sum(weights[:])
 
     for shift_idx, depth in enumerate(depth_range):
         print(shift_idx)
-        img_arr_shifted = np.roll(img_arr, -shift_idx, axis=1)
-        diff_zeros = (img_arr - img_arr_shifted) == 0
+        diff_zeros = (img_arr - np.roll(img_arr, -shift_idx, axis=1)) == 0
         diff_zeros_smoothed = convolve(diff_zeros, weights, mode='constant')
         yield shift_idx, diff_zeros_smoothed
 
